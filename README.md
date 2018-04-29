@@ -23,13 +23,13 @@ Update config_article_saver.bash and config_article_saver.py with the correct va
 
 ## Run the falcon server
 
-(From this directory:)
+From this directory:
 
     bash ./runserver.bash
 
 ## Run the Jupyter Notebook server
 
-(From this directory:)
+From this directory:
 
     jupyter notebook
 
