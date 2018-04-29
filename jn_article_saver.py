@@ -105,6 +105,19 @@ def create_and_display_article_saver():
     url_text_input.on_submit(log_event_handler)
 
 
+def construct_url(row):
+    url = row.url
+    if '#' in url:
+        anchor = '#' + url[::-1].split('#', 1)[0][::-1]
+    else:
+        anchor = ''
+    return '<a href="http://localhost:{falcon_port}/article?id={aid}{anchor}" target="_blank">{title}</a>'.format(
+        aid=row.aid,
+        title=row.title,
+        falcon_port=falcon_port,
+        anchor=anchor,
+    )
+
 
 def display_events_search_from_db():
     import psycopg2
@@ -159,20 +172,12 @@ def display_events_search_from_db():
 
         # query the db
         df = pd.read_sql(query, conn, params=params)
-        df = df.sort_values('title', ascending=False)
+        df = df.sort_values('datetime', ascending=False)
 
         now = datetime.datetime.now()
         df['time_ago'] = df.datetime.apply(lambda x: now - x)
 
-        df['title'] = df.apply(
-            lambda row:
-            '<a href="http://localhost:{falcon_port}/article?id={aid}" target="_blank">{title}</a>'.format(
-                aid=row.aid,
-                title=row.title,
-                falcon_port=falcon_port,
-            ),
-            axis=1
-        )
+        df['title'] = df.apply(construct_url, axis=1)
 
         # return the result df
         return HTML(df.drop(['content'], axis=1).to_html(escape=False))
