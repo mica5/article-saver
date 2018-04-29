@@ -11,19 +11,25 @@ create a database, a saver in jupyter notebook, and a falcon article viewer endp
         , title text
         , notes text
         , url text
-        ,content text
+        , content text
     );
 
 ## Create the config files
 
-copy config_article_saver_sample.bash to config_article_saver.bash and update with the correct values
-copy config_article_saver_sample.py to config_article_saver.py and update with the correct values
+    cp config_article_saver_sample.bash config_article_saver.bash
+    cp config_article_saver_sample.py config_article_saver.py
+
+Update config_article_saver.bash and config_article_saver.py with the correct values. Make sure the port is the same in both files.
 
 ## Run the falcon server
+
+(From this directory:)
 
     bash ./runserver.bash
 
 ## Run the Jupyter Notebook server
+
+(From this directory:)
 
     jupyter notebook
 
