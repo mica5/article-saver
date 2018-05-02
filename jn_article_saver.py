@@ -30,6 +30,10 @@ def create_and_display_article_saver():
     datetime_text_input = widgets.Text(description="Datetime")
     display(datetime_text_input)
 
+    print("HTML (if we couldn't grab the page)")
+    html_text_input = widgets.Textarea(description="Html")
+    display(html_text_input)
+
     def get_title(content):
         from bs4 import BeautifulSoup
         bs = BeautifulSoup(content, 'html.parser')
@@ -40,14 +44,18 @@ def create_and_display_article_saver():
         conn = psycopg2.connect(db_connstr)
         return conn
 
-    def save_article(url, dt=None, title=None, notes=None):
-        conn = get_connection()
-        cursor = conn.cursor()
-
+    def load_page_content_html(url):
         # load the content of the page
         import requests
         response = requests.get(url)
         content = response.content.decode()
+        return content
+
+    def save_article(url, html=None, dt=None, title=None, notes=None):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        content = html or load_page_content_html(url)
 
         if title is None:
             title = get_title(content)
@@ -90,13 +98,15 @@ def create_and_display_article_saver():
 
         notestr = notes_text_input.value.strip()
         url = url_text_input.value.strip()
+        html = html_text_input.value.strip()
 
-        save_article(url, dt=timefrom, title=None, notes=notestr)
+        save_article(url, html=html, dt=timefrom, title=None, notes=notestr)
 
         # on success, clear out all the fields
         datetime_text_input.value = ''
         notes_text_input.value = ''
         url_text_input.value = ''
+        html_text_input.value = ''
 
     # set up handlers
     log_event_handler = lambda x: handle_input()
